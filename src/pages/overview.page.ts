@@ -13,7 +13,8 @@ export class OverviewPage extends BasePage {
     readonly openNewAccountLink: Locator = this.page.getByRole('link', { name: 'Open New Account' });
     readonly AccountTable: Locator = this.page.locator("//*[@id='accountTable']");
     readonly openAccountOverviewLink: Locator = this.page.getByRole('link', { name: 'Accounts Overview' })
-    private readonly NewAccountId: Locator = this.page.locator("//*[@id='newAccountId']");
+    readonly NewAccountId: Locator = this.page.locator("//*[@id='newAccountId']");
+    readonly TransferFunds: Locator = this.page.getByRole("link", { name: "Transfer Funds" });
 
     async open() {
         await this.page.goto('/parabank/overview.htm');
@@ -29,6 +30,12 @@ export class OverviewPage extends BasePage {
 
     async navigateToAccountOverview() {
         await this.openAccountOverviewLink.click();
+        await expect(this.page.locator("//*[@id='accountTable']//a").first()).toBeVisible();
+    }
+
+    async navigateToTransferFunds() {
+        await this.TransferFunds.click();
+        await this.page.waitForLoadState("networkidle");
     }
 
     async navigateToOpenNewAccount() {
@@ -53,7 +60,7 @@ export class OverviewPage extends BasePage {
         await expect(this.page.locator("//*[@id='accountTable']//a")).toHaveCount(1);
     }
 
-      async assertAccountIsAvailable(accountId: string) {
+    async assertAccountIsAvailable(accountId: string) {
         const accountRow: Locator = this.AccountTable.locator(`tr:has(td:has-text("${accountId}"))`);
 
         await expect(accountRow).toBeVisible();
@@ -66,6 +73,32 @@ export class OverviewPage extends BasePage {
         await expect(this.wellcomeUserFullName).toContainText("Welcome");
         await expect(this.page.locator("//*[@id='accountTable']")).toBeVisible();
         await this.assertAccountTableIsNotEmpty();
+    }
+
+    async getAccountsAvailableAmount() {
+        await this.page.waitForLoadState('networkidle');
+        const balances = await this.AccountTable.locator("tbody tr td:nth-child(3)").allInnerTexts();
+        return balances.map(balance => parseFloat(balance.replace(/[$,]/g, '')));
+    }
+
+    async assertTransferUpdatedBalances(
+        account1Id: string,
+        account1AmountBeforeTransfer: number,
+        account2Id: string,
+        account2AmountBeforeTransfer: number,
+        amount: number
+    ) {
+        const account1Row: Locator = this.AccountTable.locator(`tr:has(td:has-text("${account1Id}"))`);
+        const account2Row: Locator = this.AccountTable.locator(`tr:has(td:has-text("${account2Id}"))`);
+
+        const account1AvailableAmountText: string = await account1Row.locator("td:nth-child(2)").innerText();
+        const account2AvailableAmountText: string = await account2Row.locator("td:nth-child(2)").innerText();
+
+        const account1AvailableAmount: number = parseFloat(account1AvailableAmountText.replace(/[$,]/g, ''));
+        const account2AvailableAmount: number = parseFloat(account2AvailableAmountText.replace(/[$,]/g, ''));
+
+        expect(account1AvailableAmount).toEqual(account1AmountBeforeTransfer - amount);
+        expect(account2AvailableAmount).toEqual(account2AmountBeforeTransfer + amount);
     }
 
 }

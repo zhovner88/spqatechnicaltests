@@ -6,6 +6,7 @@ import { User } from './models/user.model';
 import { DataUtils } from './utils/data.utils';
 import { UpdateProfilePage } from './pages/update-profile.page';
 import { OpenAccountPage } from './pages/open-account.page';
+import { TransferPage } from './pages/transfer.page';
 
 export class App {
     readonly page: Page;
@@ -15,6 +16,7 @@ export class App {
     readonly validUser: User;
     readonly updateProfilePage: UpdateProfilePage;
     readonly openAccountPage: OpenAccountPage;
+    readonly transferPage: TransferPage;
 
     constructor(page: Page) {
         this.page = page;
@@ -24,6 +26,7 @@ export class App {
         this.validUser = DataUtils.createValidUser();
         this.updateProfilePage = new UpdateProfilePage(page);
         this.openAccountPage = new OpenAccountPage(page);
+        this.transferPage = new TransferPage(page);
     }
     
     refresh() {
