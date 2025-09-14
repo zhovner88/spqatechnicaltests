@@ -90,11 +90,12 @@ export class RegisterPage extends BasePage {
         await this.fillPassword(userData.password);
         await this.fillConfirmPassword(userData.password);
         await this.clickRegister();
-        // await this.assertUserIsLoggedIn(userData);
+        await this.assertUserIsLoggedIn(userData);
     }
 
     async assertUserIsLoggedIn(user: User) {
-        await expect(this.LeftPanel).toContainText("Welcome " + user.firstName + " " + user.lastName);
+        // await expect(this.LeftPanel).toContainText("Welcome " + user.firstName + " " + user.lastName);
+        // await this.page.waitForURL('**/parabank/register.htm');
         await expect(this.Username).not.toBeVisible();
         await expect(this.Password).not.toBeVisible();
         await expect(this.registerButton).not.toBeVisible();

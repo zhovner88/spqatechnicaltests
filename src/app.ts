@@ -5,6 +5,7 @@ import { LandingPage } from './pages/landing.page';
 import { User } from './models/user.model';
 import { DataUtils } from './utils/data.utils';
 import { UpdateProfilePage } from './pages/update-profile.page';
+import { OpenAccountPage } from './pages/open-account.page';
 
 export class App {
     readonly page: Page;
@@ -13,6 +14,7 @@ export class App {
     readonly landingPage: LandingPage;
     readonly validUser: User;
     readonly updateProfilePage: UpdateProfilePage;
+    readonly openAccountPage: OpenAccountPage;
 
     constructor(page: Page) {
         this.page = page;
@@ -21,6 +23,7 @@ export class App {
         this.landingPage = new LandingPage(page);
         this.validUser = DataUtils.createValidUser();
         this.updateProfilePage = new UpdateProfilePage(page);
+        this.openAccountPage = new OpenAccountPage(page);
     }
     
     refresh() {
@@ -32,4 +35,5 @@ export class App {
         this.page.goBack();
         this.page.waitForLoadState("networkidle");
     }
+
 }
