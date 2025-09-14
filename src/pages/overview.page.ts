@@ -13,6 +13,7 @@ export class OverviewPage extends BasePage {
     readonly openNewAccountLink: Locator = this.page.getByRole('link', { name: 'Open New Account' });
     readonly AccountTable: Locator = this.page.locator("//*[@id='accountTable']");
     readonly openAccountOverviewLink: Locator = this.page.getByRole('link', { name: 'Accounts Overview' })
+    private readonly NewAccountId: Locator = this.page.locator("//*[@id='newAccountId']");
 
     async open() {
         await this.page.goto('/parabank/overview.htm');
@@ -43,8 +44,19 @@ export class OverviewPage extends BasePage {
         return ids.map(id => id.trim());
     }
 
+    async getNewAccountId() {
+        await this.NewAccountId.waitFor({ state: 'visible' });
+        return await this.NewAccountId.innerText();
+    }
+
     async assertAccountTableIsNotEmpty() {
         await expect(this.page.locator("//*[@id='accountTable']//a")).toHaveCount(1);
+    }
+
+      async assertAccountIsAvailable(accountId: string) {
+        const accountRow: Locator = this.AccountTable.locator(`tr:has(td:has-text("${accountId}"))`);
+
+        await expect(accountRow).toBeVisible();
     }
 
     async loginRegisteredUser(user: User) {

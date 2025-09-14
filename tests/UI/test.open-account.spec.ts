@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { test } from '../base';
 
 
-test('test should register user with valid credentials', async ({ app }) => {
+test('should display the new account in Accounts Overview', async ({ app }) => {
     app.registerPage.open();
     app.registerPage.registerUser(app.validUser)
 
@@ -19,4 +19,7 @@ test('test should register user with valid credentials', async ({ app }) => {
     await app.openAccountPage.createAccount("CHECKING", availableAccountsIds[0]);
     await app.openAccountPage.assertNewAccountIsCreated();
 
+    let newAccountId: string = await app.overviewPage.getNewAccountId();
+    await app.overviewPage.navigateToAccountOverview();
+    await app.overviewPage.assertAccountIsAvailable(newAccountId);
 });
