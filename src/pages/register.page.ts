@@ -1,6 +1,7 @@
 import { BasePage } from './base.page';
 import { Locator, Page } from '@playwright/test';
 import { User } from '../models/user.model';
+import { expect } from '@playwright/test';
 
 export class RegisterPage extends BasePage {
 
@@ -19,6 +20,10 @@ export class RegisterPage extends BasePage {
 
     readonly registrationFormTitle: Locator = this.page.locator('//*[@id="rightPanel"]/h1');
     readonly accountCreatedMessage: Locator = this.page.getByText('Your account was created');
+
+    readonly LeftPanel: Locator = this.page.locator('//*[@id="leftPanel"]/p');
+    readonly Username: Locator = this.page.getByTestId("customer.username");
+    readonly Password: Locator = this.page.getByTestId("customer.password");
 
     async open() {
         await this.page.goto('/parabank/register.htm');
@@ -85,5 +90,13 @@ export class RegisterPage extends BasePage {
         await this.fillPassword(userData.password);
         await this.fillConfirmPassword(userData.password);
         await this.clickRegister();
+        // await this.assertUserIsLoggedIn(userData);
+    }
+
+    async assertUserIsLoggedIn(user: User) {
+        await expect(this.LeftPanel).toContainText("Welcome " + user.firstName + " " + user.lastName);
+        await expect(this.Username).not.toBeVisible();
+        await expect(this.Password).not.toBeVisible();
+        await expect(this.registerButton).not.toBeVisible();
     }
 }

@@ -1,5 +1,6 @@
 import { BasePage } from "./base.page";
 import { Locator } from "@playwright/test";
+import { expect } from "@playwright/test";
 
 
 export class OverviewPage extends BasePage {
