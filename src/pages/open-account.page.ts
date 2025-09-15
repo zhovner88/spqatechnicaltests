@@ -4,25 +4,25 @@ import { expect } from "@playwright/test";
 
 export class OpenAccountPage extends BasePage {
 
-    private readonly AccountType: Locator = this.page.locator('#type');
-    private readonly FromAccountId: Locator = this.page.locator('#fromAccountId')
-    private readonly OpenNewAccount: Locator = this.page.getByRole('button', { name: 'Open New Account' });
-    private readonly NewAccountId: Locator = this.page.getByTestId("newAccountId");
+    private readonly accountType: Locator = this.page.locator('#type');
+    private readonly fromAccountId: Locator = this.page.locator('#fromAccountId')
+    private readonly openNewAccount: Locator = this.page.getByRole('button', { name: 'Open New Account' });
+    private readonly newAccountId: Locator = this.page.getByTestId("newAccountId");
 
     async createAccount(type: string, fromAccountId: string) {
-        await this.AccountType.selectOption(type);
-        await this.FromAccountId.selectOption(fromAccountId);
-        await this.OpenNewAccount.click();
+        await this.accountType.selectOption(type);
+        await this.fromAccountId.selectOption(fromAccountId);
+        await this.openNewAccount.click();
     }
 
     async openNewAccountDetails() {
-        await this.NewAccountId.click();
+        await this.newAccountId.click();
         await this.page.waitForLoadState('networkidle');
     }
 
     async getNewAccountId() {
-        await this.NewAccountId.waitFor({ state: 'visible' });
-        return await this.NewAccountId.innerText();
+        await this.newAccountId.waitFor({ state: 'visible' });
+        return await this.newAccountId.innerText();
     }
 
     async assertNewAccountIsCreated() {

@@ -11,10 +11,10 @@ export class OverviewPage extends BasePage {
     readonly logOutLink: Locator = this.page.getByRole('link', { name: 'Log Out' });
     readonly updateContactInfoLink: Locator = this.page.getByRole('link', { name: 'Update Contact Info' });
     readonly openNewAccountLink: Locator = this.page.getByRole('link', { name: 'Open New Account' });
-    readonly AccountTable: Locator = this.page.locator("//*[@id='accountTable']");
+    readonly accountTable: Locator = this.page.locator("//*[@id='accountTable']");
     readonly openAccountOverviewLink: Locator = this.page.getByRole('link', { name: 'Accounts Overview' })
-    readonly NewAccountId: Locator = this.page.locator("//*[@id='newAccountId']");
-    readonly TransferFunds: Locator = this.page.getByRole("link", { name: "Transfer Funds" });
+    readonly newAccountId: Locator = this.page.locator("//*[@id='newAccountId']");
+    readonly transferFunds: Locator = this.page.getByRole("link", { name: "Transfer Funds" });
 
     async open() {
         await this.page.goto('/parabank/overview.htm');
@@ -26,6 +26,7 @@ export class OverviewPage extends BasePage {
 
     async navigateToUpdateContactInfo() {
         await this.updateContactInfoLink.click();
+        await this.page.waitForLoadState("networkidle");
     }
 
     async navigateToAccountOverview() {
@@ -34,7 +35,7 @@ export class OverviewPage extends BasePage {
     }
 
     async navigateToTransferFunds() {
-        await this.TransferFunds.click();
+        await this.transferFunds.click();
         await this.page.waitForLoadState("networkidle");
     }
 
@@ -44,16 +45,14 @@ export class OverviewPage extends BasePage {
     }
 
     async getAccountsIds() {
-        const locator = this.AccountTable.locator("tbody tr td:first-child a");
+        const locator = this.accountTable.locator("tbody tr td:first-child a");
         const ids = await locator.allInnerTexts();
-        console.log("Account IDs locator count:", await locator.count());
-        console.log("Account IDs inner texts:", ids);
         return ids.map(id => id.trim());
     }
 
     async getNewAccountId() {
-        await this.NewAccountId.waitFor({ state: 'visible' });
-        return await this.NewAccountId.innerText();
+        await this.newAccountId.waitFor({ state: 'visible' });
+        return await this.newAccountId.innerText();
     }
 
     async assertAccountTableIsNotEmpty() {
@@ -61,7 +60,7 @@ export class OverviewPage extends BasePage {
     }
 
     async assertAccountIsAvailable(accountId: string) {
-        const accountRow: Locator = this.AccountTable.locator(`tr:has(td:has-text("${accountId}"))`);
+        const accountRow: Locator = this.accountTable.locator(`tr:has(td:has-text("${accountId}"))`);
 
         await expect(accountRow).toBeVisible();
     }
@@ -77,7 +76,7 @@ export class OverviewPage extends BasePage {
 
     async getAccountsAvailableAmount() {
         await this.page.waitForLoadState('networkidle');
-        const balances = await this.AccountTable.locator("tbody tr td:nth-child(3)").allInnerTexts();
+        const balances = await this.accountTable.locator("tbody tr td:nth-child(3)").allInnerTexts();
         return balances.map(balance => parseFloat(balance.replace(/[$,]/g, '')));
     }
 
@@ -88,8 +87,8 @@ export class OverviewPage extends BasePage {
         account2AmountBeforeTransfer: number,
         amount: number
     ) {
-        const account1Row: Locator = this.AccountTable.locator(`tr:has(td:has-text("${account1Id}"))`);
-        const account2Row: Locator = this.AccountTable.locator(`tr:has(td:has-text("${account2Id}"))`);
+        const account1Row: Locator = this.accountTable.locator(`tr:has(td:has-text("${account1Id}"))`);
+        const account2Row: Locator = this.accountTable.locator(`tr:has(td:has-text("${account2Id}"))`);
 
         const account1AvailableAmountText: string = await account1Row.locator("td:nth-child(2)").innerText();
         const account2AvailableAmountText: string = await account2Row.locator("td:nth-child(2)").innerText();

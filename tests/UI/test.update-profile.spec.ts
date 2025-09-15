@@ -1,4 +1,3 @@
-import { expect } from '@playwright/test';
 import { test } from '../base';
 
 [
@@ -10,16 +9,14 @@ import { test } from '../base';
     { fieldName: "Zip Code" },
     { fieldName: "Phone" }
 ].forEach(({ fieldName }) => {
-    test(`test should update user profile - ${fieldName}`, async ({ app }) => {
-        app.registerPage.open();
-        app.registerPage.registerUser(app.validUser)
+    test(`test should update user profile - ${fieldName}`, async ({ app, registerNewUser }) => {
+        await registerNewUser();
 
-        app.overviewPage.navigateToUpdateContactInfo();
-
-
-        await app.updateProfilePage.updateExistingUserField("First Name", "Updated field");
         await app.overviewPage.navigateToUpdateContactInfo();
-        await app.updateProfilePage.assertFieldIsUpdated("First Name", "Updated field");
+
+        await app.updateProfilePage.updateExistingUserField(fieldName, "Updated field");
+        await app.overviewPage.navigateToUpdateContactInfo();
+        await app.updateProfilePage.assertFieldIsUpdated(fieldName, "Updated field");
 
     });
 });

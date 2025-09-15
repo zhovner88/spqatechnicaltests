@@ -1,66 +1,52 @@
-import { expect } from '@playwright/test';
 import { test } from '../base';
 
+const FIRST_TRANSFER_AMOUNT = "10.00";
+const SECOND_TRANSFER_AMOUNT = "25.00";
+const ACCOUNT_TYPE = "SAVINGS";
 
-test('should transfer funds between accounts', async ({ app }) => {
-    app.registerPage.open();
-    app.registerPage.registerUser(app.validUser);
+test('should transfer funds between accounts', async ({ app, loginAsRegisteredUser, createAdditionalAccount }) => {
+    await loginAsRegisteredUser();
 
-    await expect(app.registerPage.registrationFormTitle)
-        .toHaveText(`Welcome ${app.validUser.username}`);
-    await expect(app.registerPage.accountCreatedMessage)
-        .toHaveText('Your account was created successfully. You are now logged in.');
-
-    await app.overviewPage.logout();
-    await app.overviewPage.loginRegisteredUser(app.validUser);
-
-    let availableAccountsIds: string[] = await app.overviewPage.getAccountsIds();
-    let defaultAccountId: string = availableAccountsIds[0];
-
-    // Create a new account to transfer funds into
-    await app.overviewPage.navigateToOpenNewAccount();
-    await app.openAccountPage.createAccount("SAVINGS", availableAccountsIds[0]);
-    await app.openAccountPage.assertNewAccountIsCreated();
-
-    await app.overviewPage.navigateToAccountOverview();
-    let newAccountIds: string[] = await app.overviewPage.getAccountsIds();
-    let newAccountId: string = newAccountIds[1];
-    const accountsAvailableAmount = await app.overviewPage.getAccountsAvailableAmount();
-    const defaultAccountAvailableAmount = accountsAvailableAmount[0];
-    const newAccountAvailableAmount = accountsAvailableAmount[1];
+    const accounts = await createAdditionalAccount(ACCOUNT_TYPE);
+    const {
+        defaultAccountId: checkingAccountId,
+        newAccountId: savingsAccountId,
+        defaultAccountBalance: checkingInitialBalance,
+        newAccountBalance: savingsInitialBalance
+    } = accounts;
 
     await app.overviewPage.navigateToTransferFunds();
-    await app.transferPage.transferFunds("10.00", defaultAccountId, newAccountId);
-    await app.transferPage.assertTransferIsCompleted("10.00", defaultAccountId, newAccountId);
+    await app.transferPage.transferFunds(FIRST_TRANSFER_AMOUNT, checkingAccountId, savingsAccountId);
+    await app.transferPage.assertTransferIsCompleted(FIRST_TRANSFER_AMOUNT, checkingAccountId, savingsAccountId);
 
     await app.overviewPage.navigateToAccountOverview();
 
     await app.overviewPage.assertTransferUpdatedBalances(
-        defaultAccountId,
-        defaultAccountAvailableAmount,
-        newAccountId,
-        newAccountAvailableAmount,
-        parseFloat("10.00")
+        checkingAccountId,
+        checkingInitialBalance,
+        savingsAccountId,
+        savingsInitialBalance,
+        parseFloat(FIRST_TRANSFER_AMOUNT)
     );
 
     await app.overviewPage.navigateToAccountOverview();
     const balancesAfterFirstTransfer = await app.overviewPage.getAccountsAvailableAmount();
 
-    const checkingBalanceBeforeSecondTransfer = balancesAfterFirstTransfer[0];
-    const savingsBalanceBeforeSecondTransfer = balancesAfterFirstTransfer[1];
+    const checkingBalanceAfterFirstTransfer = balancesAfterFirstTransfer[0];
+    const savingsBalanceAfterFirstTransfer = balancesAfterFirstTransfer[1];
 
     await app.overviewPage.navigateToTransferFunds();
-    await app.transferPage.transferFunds("25.00", newAccountId, defaultAccountId);
+    await app.transferPage.transferFunds(SECOND_TRANSFER_AMOUNT, savingsAccountId, checkingAccountId);
 
-    await app.transferPage.assertTransferIsCompleted("25.00", newAccountId, defaultAccountId);
+    await app.transferPage.assertTransferIsCompleted(SECOND_TRANSFER_AMOUNT, savingsAccountId, checkingAccountId);
 
     await app.overviewPage.navigateToAccountOverview();
 
     await app.overviewPage.assertTransferUpdatedBalances(
-        newAccountId,
-        savingsBalanceBeforeSecondTransfer,
-        defaultAccountId,
-        checkingBalanceBeforeSecondTransfer,
-        25.00
+        savingsAccountId,
+        savingsBalanceAfterFirstTransfer,
+        checkingAccountId,
+        checkingBalanceAfterFirstTransfer,
+        parseFloat(SECOND_TRANSFER_AMOUNT)
     );
 });

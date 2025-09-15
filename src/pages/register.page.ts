@@ -21,9 +21,8 @@ export class RegisterPage extends BasePage {
     readonly registrationFormTitle: Locator = this.page.locator('//*[@id="rightPanel"]/h1');
     readonly accountCreatedMessage: Locator = this.page.getByText('Your account was created');
 
-    readonly LeftPanel: Locator = this.page.locator('//*[@id="leftPanel"]/p');
-    readonly Username: Locator = this.page.getByTestId("customer.username");
-    readonly Password: Locator = this.page.getByTestId("customer.password");
+    private readonly username: Locator = this.page.getByTestId("customer.username");
+    private readonly password: Locator = this.page.getByTestId("customer.password");
 
     async open() {
         await this.page.goto('/parabank/register.htm');
@@ -94,10 +93,8 @@ export class RegisterPage extends BasePage {
     }
 
     async assertUserIsLoggedIn(user: User) {
-        // await expect(this.LeftPanel).toContainText("Welcome " + user.firstName + " " + user.lastName);
-        // await this.page.waitForURL('**/parabank/register.htm');
-        await expect(this.Username).not.toBeVisible();
-        await expect(this.Password).not.toBeVisible();
+        await expect(this.username).not.toBeVisible();
+        await expect(this.password).not.toBeVisible();
         await expect(this.registerButton).not.toBeVisible();
     }
 }
