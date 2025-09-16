@@ -6,7 +6,7 @@ import { User } from "../models/user.model";
 
 export class OverviewPage extends BasePage {
 
-    readonly wellcomeUserFullName: Locator = this.page.locator('//*[@id="leftPanel"]/p');
+    readonly wellcomeUserFullName: Locator = this.page.getByText('Welcome', { exact: false });
     readonly logOutLink: Locator = this.page.getByRole('link', { name: 'Log Out' });
     readonly updateContactInfoLink: Locator = this.page.getByRole('link', { name: 'Update Contact Info' });
     readonly openNewAccountLink: Locator = this.page.getByRole('link', { name: 'Open New Account' });
@@ -30,7 +30,7 @@ export class OverviewPage extends BasePage {
 
     async navigateToAccountOverview() {
         await this.openAccountOverviewLink.click();
-        await expect(this.page.locator("//*[@id='accountTable']//a").first()).toBeVisible();
+        await expect(this.page.getByTestId('showOverview').getByRole('link').nth(0)).toBeVisible();
     }
 
     async navigateToTransferFunds() {
@@ -40,11 +40,11 @@ export class OverviewPage extends BasePage {
 
     async navigateToOpenNewAccount() {
         await this.openNewAccountLink.click();
-        await expect(this.page.locator('#fromAccountId')).toBeVisible();
+        await expect(this.page.getByTestId('fromAccountId')).toBeVisible();
     }
 
     async getAccountsIds() {
-        const locator = this.accountTable.locator("tbody tr td:first-child a");
+        const locator = this.page.getByTestId('showOverview').getByRole('link')
         const ids = await locator.allInnerTexts();
         return ids.map(id => id.trim());
     }
@@ -55,12 +55,13 @@ export class OverviewPage extends BasePage {
     }
 
     async assertAccountTableIsNotEmpty() {
-        await expect(this.page.locator("//*[@id='accountTable']//a")).toHaveCount(1);
+        await expect(this.page.getByTestId('showOverview').getByRole('link').nth(0)).toHaveCount(1);
     }
 
     async assertAccountIsAvailable(accountId: string) {
-        const accountRow: Locator = this.accountTable.locator(`tr:has(td:has-text("${accountId}"))`);
-
+        const accountRow: Locator = this.page.getByTestId('showOverview')
+        .getByRole('link')
+        .filter({ hasText: accountId });
         await expect(accountRow).toBeVisible();
     }
 
@@ -68,8 +69,8 @@ export class OverviewPage extends BasePage {
         await this.page.locator('input[name="username"]').fill(user.username);
         await this.page.locator('input[name="password"]').fill(user.password);
         await this.page.getByRole('button', { name: 'Log In' }).click();
-        await expect(this.wellcomeUserFullName).toContainText("Welcome");
-        await expect(this.page.locator("//*[@id='accountTable']")).toBeVisible();
+        expect(this.wellcomeUserFullName).toBeVisible;
+        await expect(this.page.getByTestId("accountTable")).toBeVisible();
         await this.assertAccountTableIsNotEmpty();
     }
 

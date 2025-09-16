@@ -8,7 +8,6 @@ export class TransferPage extends BasePage {
     private readonly transfer: Locator = this.page.getByRole('button', { name: 'Transfer' })
     private readonly rightPanel: Locator = this.page.getByTestId("transferApp");
     private readonly errorPanel: Locator = this.page.getByTestId("errorPanel");
-    private readonly transferFormTitle: Locator = this.page.locator('//*[@id="rightPanel"]/div/div/h1');
 
     async transferFunds(amount: string, fromAccountId: string, toAccountId: string) {
         await this.amount.fill(amount);

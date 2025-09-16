@@ -3,13 +3,13 @@ import { BasePage } from "./base.page";
 import { User } from "../models/user.model";
 
 export class UpdateProfilePage extends BasePage {
-    readonly FirstName: Locator = this.page.locator('[id="customer.firstName"]')
-    readonly LastName: Locator = this.page.locator('[id="customer.lastName"]')
-    readonly Address: Locator = this.page.locator('[id="customer.address.street"]')
-    readonly City: Locator = this.page.locator('[id="customer.address.city"]')
-    readonly State: Locator = this.page.locator('[id="customer.address.state"]')
-    readonly ZipCode: Locator = this.page.locator('[id="customer.address.zipCode"]')
-    readonly Phone: Locator = this.page.locator('[id="customer.phoneNumber"]')
+    readonly FirstName: Locator = this.page.getByTestId('customer.firstName');
+    readonly LastName: Locator = this.page.getByTestId('customer.lastName');
+    readonly Address: Locator = this.page.getByTestId('customer.address.street');
+    readonly City: Locator = this.page.getByTestId('customer.address.city');
+    readonly State: Locator = this.page.getByTestId('customer.address.state');
+    readonly ZipCode: Locator = this.page.getByTestId('customer.address.zipCode');
+    readonly Phone: Locator = this.page.getByTestId('customer.phoneNumber');
     readonly UpdateProfile: Locator = this.page.getByRole('button', { name: 'Update Profile' })
 
     async updateExistingUserField(field: string, value: string) {
