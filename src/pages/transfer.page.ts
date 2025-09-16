@@ -2,12 +2,12 @@ import { expect, Locator, Page } from "@playwright/test";
 import { BasePage } from "./base.page";
 
 export class TransferPage extends BasePage {
-    private readonly amount: Locator = this.page.locator("//*[@id='amount']");
-    private readonly fromAccountId: Locator = this.page.locator('//*[@id="fromAccountId"]');
-    private readonly toAccountId: Locator = this.page.locator('//*[@id="toAccountId"]');
+    private readonly amount: Locator = this.page.getByTestId("amount");
+    private readonly fromAccountId: Locator = this.page.getByTestId("fromAccountId");
+    private readonly toAccountId: Locator = this.page.getByTestId("toAccountId");
     private readonly transfer: Locator = this.page.getByRole('button', { name: 'Transfer' })
-    private readonly rightPanel: Locator = this.page.locator("//*[@id='transferApp']");
-    private readonly errorPanel: Locator = this.page.locator("//*[@id='errorPanel']");
+    private readonly rightPanel: Locator = this.page.getByTestId("transferApp");
+    private readonly errorPanel: Locator = this.page.getByTestId("errorPanel");
     private readonly transferFormTitle: Locator = this.page.locator('//*[@id="rightPanel"]/div/div/h1');
 
     async transferFunds(amount: string, fromAccountId: string, toAccountId: string) {

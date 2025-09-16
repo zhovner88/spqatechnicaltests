@@ -4,8 +4,8 @@ import { expect } from "@playwright/test";
 
 export class OpenAccountPage extends BasePage {
 
-    private readonly accountType: Locator = this.page.locator('#type');
-    private readonly fromAccountId: Locator = this.page.locator('#fromAccountId')
+    private readonly accountType: Locator = this.page.getByTestId('type');
+    private readonly fromAccountId: Locator = this.page.getByTestId('fromAccountId');
     private readonly openNewAccount: Locator = this.page.getByRole('button', { name: 'Open New Account' });
     private readonly newAccountId: Locator = this.page.getByTestId("newAccountId");
 
@@ -26,9 +26,9 @@ export class OpenAccountPage extends BasePage {
     }
 
     async assertNewAccountIsCreated() {
-        await expect(this.page.locator("//*[@id='openAccountResult']")).toContainText("Congratulations, your account is now open.");
-        await expect(this.page.locator("//*[@id='rightPanel']")).toContainText("Account Opened!");
-        await expect(this.page.locator("//*[@id='rightPanel']")).toContainText(/Your new account number: \d+/);
+        await expect(this.page.getByTestId("openAccountResult")).toContainText("Congratulations, your account is now open.");
+        await expect(this.page.getByTestId("rightPanel")).toContainText("Account Opened!");
+        await expect(this.page.getByTestId("rightPanel")).toContainText(/Your new account number: \d+/);
     }
 
 }

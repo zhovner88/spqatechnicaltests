@@ -5,21 +5,20 @@ import { expect } from '@playwright/test';
 
 export class RegisterPage extends BasePage {
 
-    readonly firstNameInput: Locator = this.page.locator('[id="customer.firstName"]');
-    readonly lastNameInput: Locator = this.page.locator('[id="customer.lastName"]');
-    readonly streetInput: Locator = this.page.locator('[id="customer.address.street"]');
-    readonly cityInput: Locator = this.page.locator('[id="customer.address.city"]');
-    readonly stateInput: Locator = this.page.locator('[id="customer.address.state"]');
-    readonly zipCodeInput: Locator = this.page.locator('[id="customer.address.zipCode"]');
-    readonly phoneInput: Locator = this.page.locator('[id="customer.phoneNumber"]');
-    readonly ssnInput: Locator = this.page.locator('[id="customer.ssn"]');
-    readonly usernameInput: Locator = this.page.locator('[id="customer.username"]');
-    readonly passwordInput: Locator = this.page.locator('[id="customer.password"]');
-    readonly confirmPasswordInput: Locator = this.page.locator('#repeatedPassword');
+    readonly firstNameInput: Locator = this.page.getByTestId('customer.firstName');
+    readonly lastNameInput: Locator = this.page.getByTestId('customer.lastName');
+    readonly streetInput: Locator    = this.page.getByTestId('customer.address.street');
+    readonly cityInput: Locator = this.page.getByTestId('customer.address.city');
+    readonly stateInput: Locator = this.page.getByTestId('customer.address.state');
+    readonly zipCodeInput: Locator = this.page.getByTestId('customer.address.zipCode');
+    readonly phoneInput: Locator = this.page.getByTestId('customer.phoneNumber');
+    readonly ssnInput: Locator = this.page.getByTestId('customer.ssn');
+    readonly usernameInput: Locator = this.page.getByTestId('customer.username');
+    readonly passwordInput: Locator = this.page.getByTestId('customer.password');
+    readonly confirmPasswordInput: Locator = this.page.getByTestId('repeatedPassword');
     readonly registerButton: Locator = this.page.getByRole('button', { name: 'Register' });
 
-    readonly registrationFormTitle: Locator = this.page.locator('//*[@id="rightPanel"]/h1');
-    readonly accountCreatedMessage: Locator = this.page.getByText('Your account was created');
+    readonly rightPanel: Locator = this.page.getByTestId('rightPanel');
 
     private readonly username: Locator = this.page.getByTestId("customer.username");
     private readonly password: Locator = this.page.getByTestId("customer.password");

@@ -7,13 +7,12 @@ import { User } from "../models/user.model";
 export class OverviewPage extends BasePage {
 
     readonly wellcomeUserFullName: Locator = this.page.locator('//*[@id="leftPanel"]/p');
-    readonly accountOverviewTable: Locator = this.page.locator('//*[@id="accountTable"]');
     readonly logOutLink: Locator = this.page.getByRole('link', { name: 'Log Out' });
     readonly updateContactInfoLink: Locator = this.page.getByRole('link', { name: 'Update Contact Info' });
     readonly openNewAccountLink: Locator = this.page.getByRole('link', { name: 'Open New Account' });
-    readonly accountTable: Locator = this.page.locator("//*[@id='accountTable']");
+    readonly accountTable: Locator = this.page.getByTestId("accountTable");
     readonly openAccountOverviewLink: Locator = this.page.getByRole('link', { name: 'Accounts Overview' })
-    readonly newAccountId: Locator = this.page.locator("//*[@id='newAccountId']");
+    readonly newAccountId: Locator = this.page.getByTestId("newAccountId");
     readonly transferFunds: Locator = this.page.getByRole("link", { name: "Transfer Funds" });
 
     async open() {
