@@ -1,5 +1,5 @@
 import { BasePage } from './base.page';
-import { Locator, Page } from '@playwright/test';
+import { Locator } from '@playwright/test';
 import { User } from '../models/user.model';
 import { expect } from '@playwright/test';
 
@@ -19,12 +19,15 @@ export class RegisterPage extends BasePage {
     readonly registerButton: Locator = this.page.getByRole('button', { name: 'Register' });
 
     readonly rightPanel: Locator = this.page.getByTestId('rightPanel');
+    readonly registrationFormError: Locator = this.page.getByText('If you have an account with');
 
     private readonly username: Locator = this.page.getByTestId("customer.username");
     private readonly password: Locator = this.page.getByTestId("customer.password");
 
     async open() {
         await this.page.goto('/parabank/register.htm');
+        await this.page.waitForLoadState('networkidle');
+        await this.page.waitForLoadState('domcontentloaded');
     }
 
     async fillFirstName(firstName: string) {
@@ -73,6 +76,7 @@ export class RegisterPage extends BasePage {
 
     async clickRegister() {
         await this.registerButton.click();
+        await this.page.waitForLoadState('networkidle');
     }
 
     async registerUser(userData: User) {
@@ -92,6 +96,7 @@ export class RegisterPage extends BasePage {
     }
 
     async assertUserIsLoggedIn(user: User) {
+        await expect(this.rightPanel).toContainText(`Welcome ${user.username}`);
         await expect(this.username).not.toBeVisible();
         await expect(this.password).not.toBeVisible();
         await expect(this.registerButton).not.toBeVisible();

@@ -28,15 +28,5 @@ export class App {
         this.openAccountPage = new OpenAccountPage(page);
         this.transferPage = new TransferPage(page);
     }
-    
-    refresh() {
-        this.page.reload();
-        this.page.waitForLoadState("networkidle");
-    }
-
-    back() {
-        this.page.goBack();
-        this.page.waitForLoadState("networkidle");
-    }
 
 }

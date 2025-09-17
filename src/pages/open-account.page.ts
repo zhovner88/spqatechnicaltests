@@ -20,11 +20,6 @@ export class OpenAccountPage extends BasePage {
         await this.page.waitForLoadState('networkidle');
     }
 
-    async getNewAccountId() {
-        await this.newAccountId.waitFor({ state: 'visible' });
-        return await this.newAccountId.innerText();
-    }
-
     async assertNewAccountIsCreated() {
         await expect(this.page.getByTestId("openAccountResult")).toContainText("Congratulations, your account is now open.");
         await expect(this.page.getByTestId("rightPanel")).toContainText("Account Opened!");

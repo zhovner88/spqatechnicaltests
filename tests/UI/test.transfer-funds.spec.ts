@@ -4,8 +4,8 @@ const FIRST_TRANSFER_AMOUNT = "10.00";
 const SECOND_TRANSFER_AMOUNT = "25.00";
 const ACCOUNT_TYPE = "SAVINGS";
 
-test('should transfer funds between accounts', async ({ app, loginAsRegisteredUser, createAdditionalAccount }) => {
-    await loginAsRegisteredUser();
+test('should transfer funds between accounts', async ({ app, registerNewUserAPIandLogin, createAdditionalAccount }) => {
+    await registerNewUserAPIandLogin();
 
     const accounts = await createAdditionalAccount(ACCOUNT_TYPE);
     const {

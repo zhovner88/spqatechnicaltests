@@ -6,7 +6,7 @@ import { User } from "../models/user.model";
 
 export class OverviewPage extends BasePage {
 
-    readonly wellcomeUserFullName: Locator = this.page.getByText('Welcome', { exact: false });
+    readonly welcomeUserFullName: Locator = this.page.getByText('Welcome', { exact: false });
     readonly logOutLink: Locator = this.page.getByRole('link', { name: 'Log Out' });
     readonly updateContactInfoLink: Locator = this.page.getByRole('link', { name: 'Update Contact Info' });
     readonly openNewAccountLink: Locator = this.page.getByRole('link', { name: 'Open New Account' });
@@ -17,6 +17,7 @@ export class OverviewPage extends BasePage {
 
     async open() {
         await this.page.goto('/parabank/overview.htm');
+        await this.page.waitForLoadState("networkidle");
     }
 
     async logout() {
@@ -24,9 +25,17 @@ export class OverviewPage extends BasePage {
     }
 
     async navigateToUpdateContactInfo() {
-        await this.updateContactInfoLink.click();
+        await Promise.all([
+            this.page.waitForResponse((response) =>
+                response.url().includes('/parabank/services_proxy/bank/customers/') &&
+                response.request().method() === 'GET' &&
+                [200, 304].includes(response.status())
+            ),
+            this.updateContactInfoLink.click(),
+        ]);
         await this.page.waitForLoadState("networkidle");
     }
+
 
     async navigateToAccountOverview() {
         await this.openAccountOverviewLink.click();
@@ -60,8 +69,8 @@ export class OverviewPage extends BasePage {
 
     async assertAccountIsAvailable(accountId: string) {
         const accountRow: Locator = this.page.getByTestId('showOverview')
-        .getByRole('link')
-        .filter({ hasText: accountId });
+            .getByRole('link')
+            .filter({ hasText: accountId });
         await expect(accountRow).toBeVisible();
     }
 
@@ -69,7 +78,7 @@ export class OverviewPage extends BasePage {
         await this.page.locator('input[name="username"]').fill(user.username);
         await this.page.locator('input[name="password"]').fill(user.password);
         await this.page.getByRole('button', { name: 'Log In' }).click();
-        expect(this.wellcomeUserFullName).toBeVisible;
+        expect(this.welcomeUserFullName).toBeVisible;
         await expect(this.page.getByTestId("accountTable")).toBeVisible();
         await this.assertAccountTableIsNotEmpty();
     }
