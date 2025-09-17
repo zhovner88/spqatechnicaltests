@@ -38,5 +38,5 @@ UI Automaiton
 - test.update-profile.spec.ts - validation of updating fields one by one. Scenarios where all fields updated, edge cases, security verifications for fields, error messages should be added later.
 - transfer-funds.spec.ts - end-to-end scneario that validates account found transfer.
 
-Notes:
-- test.update-profile.spec.ts might be stabilized, sometimes it fails with 'user already registered' error message. Rerun helps to get test passed.
+Test Results
+![alt text](test_results.png)
