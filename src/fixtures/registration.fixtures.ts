@@ -17,7 +17,7 @@ export const registerFixtures = {
 
   registerNewUser: async ({ page }: { page: Page }, use: any) => {
     const registerNewUser = async () => {
-      const uniqueUser = DataUtils.createValidUser(); // Generate unique user for each test
+      const uniqueUser = DataUtils.createValidUser();
       const registerPage = new RegisterPage(page);
       await registerPage.open();
       await registerPage.registerUser(uniqueUser);
@@ -28,7 +28,7 @@ export const registerFixtures = {
 
   registerNewUserAPI: async ({ request }: { request: APIRequestContext }, use: any) => {
     const registerNewUserAPI = async () => {
-      const uniqueUser = DataUtils.createValidUser(); // Generate unique user for each test
+      const uniqueUser = DataUtils.createValidUser();
       const apiHelper = new ApiHelper(request);
       await apiHelper.registerUser(uniqueUser);
       return uniqueUser;
@@ -38,7 +38,7 @@ export const registerFixtures = {
 
   registerNewUserAPIandLogin: async ({ page, request }: { page: Page, request: APIRequestContext }, use: any) => {
     const registerNewUserAPIandLogin = async () => {
-      const uniqueUser = DataUtils.createValidUser(); // Generate unique user for each test
+      const uniqueUser = DataUtils.createValidUser();
       const apiHelper = new ApiHelper(request);
       await apiHelper.registerUser(uniqueUser);
 
