@@ -16,7 +16,9 @@ import { test } from '../base';
 
         await app.updateProfilePage.updateExistingUserField(fieldName, "Updated field");
         await app.overviewPage.navigateToUpdateContactInfo();
-        await app.updateProfilePage.assertFieldIsUpdated(fieldName, "Updated field");
+        await app.updateProfilePage.assertFieldIsUpdated(fieldName, "Updated field"); 
+
+        await app.overviewPage.logout();
 
     });
 });
