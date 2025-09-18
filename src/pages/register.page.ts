@@ -7,7 +7,7 @@ export class RegisterPage extends BasePage {
 
     readonly firstNameInput: Locator = this.page.getByTestId('customer.firstName');
     readonly lastNameInput: Locator = this.page.getByTestId('customer.lastName');
-    readonly streetInput: Locator    = this.page.getByTestId('customer.address.street');
+    readonly streetInput: Locator = this.page.getByTestId('customer.address.street');
     readonly cityInput: Locator = this.page.getByTestId('customer.address.city');
     readonly stateInput: Locator = this.page.getByTestId('customer.address.state');
     readonly zipCodeInput: Locator = this.page.getByTestId('customer.address.zipCode');
@@ -20,6 +20,8 @@ export class RegisterPage extends BasePage {
 
     readonly rightPanel: Locator = this.page.getByTestId('rightPanel');
     readonly registrationFormError: Locator = this.page.getByText('If you have an account with');
+
+    readonly registrationFormUserAlreadyExistsError: Locator = this.page.getByTestId('customer.username.errors');
 
     private readonly username: Locator = this.page.getByTestId("customer.username");
     private readonly password: Locator = this.page.getByTestId("customer.password");
@@ -79,18 +81,45 @@ export class RegisterPage extends BasePage {
         await this.page.waitForLoadState('networkidle');
     }
 
-    async registerUser(userData: User) {
-        await this.fillFirstName(userData.firstName);
-        await this.fillLastName(userData.lastName);
-        await this.fillStreet(userData.street);
-        await this.fillCity(userData.city);
-        await this.fillState(userData.state);
-        await this.fillZipCode(userData.zipCode);
-        await this.fillPhone(userData.phone);
-        await this.fillSSN(userData.ssn);
-        await this.fillUsername(userData.username);
-        await this.fillPassword(userData.password);
+    private readonly registrationFieldFillers: Readonly<Record<keyof User, (value: string) => Promise<void>>> = {
+        firstName: value => this.fillFirstName(value),
+        lastName: value => this.fillLastName(value),
+        street: value => this.fillStreet(value),
+        city: value => this.fillCity(value),
+        state: value => this.fillState(value),
+        zipCode: value => this.fillZipCode(value),
+        phone: value => this.fillPhone(value),
+        ssn: value => this.fillSSN(value),
+        username: value => this.fillUsername(value),
+        password: value => this.fillPassword(value),
+    };
+
+    private readonly registrationFlowFields: ReadonlyArray<keyof User> = [
+        'firstName',
+        'lastName',
+        'street',
+        'city',
+        'state',
+        'zipCode',
+        'phone',
+        'ssn',
+        'username',
+        'password',
+    ];
+
+    private async fillUserFields<T extends keyof User>(userData: User, fields: ReadonlyArray<T>) {
+        for (const field of fields) {
+            await this.registrationFieldFillers[field](userData[field]);
+        }
+    }
+
+    async fillInRegistrationForm(userData: User) {
+        await this.fillUserFields(userData, this.registrationFlowFields);
         await this.fillConfirmPassword(userData.password);
+    }
+
+    async registerUser(userData: User) {
+        await this.fillInRegistrationForm(userData);
         await this.clickRegister();
         await this.assertUserIsLoggedIn(userData);
     }

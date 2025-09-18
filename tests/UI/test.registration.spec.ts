@@ -24,3 +24,14 @@ test('test should verify error messages for input fields during registration', a
     
     await expect(app.page).toHaveScreenshot('registration-input-error.png')
 });
+
+test('test should not register user with existing username', async ({ app, registerNewUserAPI }) => {
+    const existingUser = await registerNewUserAPI();
+
+    await app.registerPage.open();
+    await app.registerPage.fillInRegistrationForm(existingUser);
+    await app.registerPage.clickRegister();
+
+    await expect(app.registerPage.registrationFormError).toBeVisible();
+    await expect(app.registerPage.registrationFormUserAlreadyExistsError).toHaveText('This username already exists.');
+});
