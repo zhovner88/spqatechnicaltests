@@ -8,6 +8,7 @@ import { DataUtils } from '../utils/data.utils';
 export type RegisterFixtures = {
   registeredUser: typeof USERS.validUser;
   registerNewUser: () => Promise<typeof USERS.validUser>;
+  registerNewUserMandatoryFields: () => Promise<typeof USERS.validUser>;
   registerNewUserAPI: () => Promise<typeof USERS.validUser>;
   registerNewUserAPIandLogin: () => Promise<typeof USERS.validUser>;
 };
@@ -24,6 +25,18 @@ export const registerFixtures = {
       return uniqueUser;
     };
     await use(registerNewUser);
+  },
+
+  registerNewUserMandatoryFields: async ({ page }: { page: Page }, use: any) => {
+    const registerNewUserMandatoryFields = async () => {
+      const uniqueUser = DataUtils.createValidUser();
+      const registerPage = new RegisterPage(page);
+      await registerPage.open();
+      await registerPage.fillInRegistrationFormMandatoryFields(uniqueUser);
+      await registerPage.clickRegister();
+      return uniqueUser;
+    };
+    await use(registerNewUserMandatoryFields);
   },
 
   registerNewUserAPI: async ({ request }: { request: APIRequestContext }, use: any) => {

@@ -2,6 +2,8 @@ import { expect, Locator } from "@playwright/test";
 import { BasePage } from "./base.page";
 import { User } from "../models/user.model";
 
+type UserInfoField = keyof Pick<User, 'firstName' | 'lastName' | 'street' | 'city' | 'state' | 'zipCode' | 'phone'>;
+
 export class UpdateProfilePage extends BasePage {
     readonly FirstName: Locator = this.page.getByTestId('customer.firstName');
     readonly LastName: Locator = this.page.getByTestId('customer.lastName');
@@ -11,6 +13,34 @@ export class UpdateProfilePage extends BasePage {
     readonly ZipCode: Locator = this.page.getByTestId('customer.address.zipCode');
     readonly Phone: Locator = this.page.getByTestId('customer.phoneNumber');
     readonly UpdateProfile: Locator = this.page.getByRole('button', { name: 'Update Profile' })
+
+    private readonly userInfoLocators: Record<UserInfoField, Locator> = {
+        firstName: this.FirstName,
+        lastName: this.LastName,
+        street: this.Address,
+        city: this.City,
+        state: this.State,
+        zipCode: this.ZipCode,
+        phone: this.Phone,
+    };
+
+    private readonly userInfoFields = Object.keys(this.userInfoLocators) as UserInfoField[];
+
+    private async assertUserFields<T extends UserInfoField>(
+        fields: readonly T[],
+        expectedValueResolver: (field: T) => string | null,
+    ) {
+        for (const field of fields) {
+            const locator = this.userInfoLocators[field];
+            const expectedValue = expectedValueResolver(field);
+
+            if (expectedValue === null) {
+                await expect(locator).toBeEmpty();
+            } else {
+                await expect(locator).toHaveValue(expectedValue);
+            }
+        }
+    }
 
     async updateExistingUserField(field: string, value: string) {
         const fieldMap: Record<string, Locator> = {
@@ -30,6 +60,7 @@ export class UpdateProfilePage extends BasePage {
         await locator.fill('');
         await locator.fill(value);
         await this.UpdateProfile.click();
+        await this.page.waitForLoadState('networkidle');
     }
 
     async assertFieldIsUpdated(field: string, value: string) {
@@ -51,12 +82,13 @@ export class UpdateProfilePage extends BasePage {
     }
 
     async validateAllUserInfo(user: User) {
-        await expect(this.FirstName).toHaveValue(user.firstName);
-        await expect(this.LastName).toHaveValue(user.lastName);
-        await expect(this.Address).toHaveValue(user.street);
-        await expect(this.City).toHaveValue(user.city);
-        await expect(this.State).toHaveValue(user.state);
-        await expect(this.ZipCode).toHaveValue(user.zipCode);
-        await expect(this.Phone).toHaveValue(user.phone);
+        await this.assertUserFields(this.userInfoFields, (field) => user[field]);
+    }
+
+    async validateAllUserInfoMandatoryFields(user: User) {
+        await this.assertUserFields(
+            this.userInfoFields,
+            (field) => field === 'phone' ? null : user[field],
+        );
     }
 }

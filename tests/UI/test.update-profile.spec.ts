@@ -9,8 +9,8 @@ import { test } from '../base';
     { fieldName: "Zip Code" },
     { fieldName: "Phone" }
 ].forEach(({ fieldName }) => {
-    test(`test should update user profile - ${fieldName}`, async ({ app, registerNewUserAPIandLogin }) => {
-        await registerNewUserAPIandLogin();
+    test(`test should update user profile - ${fieldName}`, async ({ app, registerNewUser }) => {
+        await registerNewUser();
 
         await app.overviewPage.navigateToUpdateContactInfo();
         await app.updateProfilePage.updateExistingUserField(fieldName, "Updated field");

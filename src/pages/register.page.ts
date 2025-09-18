@@ -107,6 +107,18 @@ export class RegisterPage extends BasePage {
         'password',
     ];
 
+        private readonly registrationFlowFieldsMandatoryFields: ReadonlyArray<keyof User> = [
+        'firstName',
+        'lastName',
+        'street',
+        'city',
+        'state',
+        'zipCode',
+        'ssn',
+        'username',
+        'password',
+    ];
+
     private async fillUserFields<T extends keyof User>(userData: User, fields: ReadonlyArray<T>) {
         for (const field of fields) {
             await this.registrationFieldFillers[field](userData[field]);
@@ -115,6 +127,11 @@ export class RegisterPage extends BasePage {
 
     async fillInRegistrationForm(userData: User) {
         await this.fillUserFields(userData, this.registrationFlowFields);
+        await this.fillConfirmPassword(userData.password);
+    }
+
+    async fillInRegistrationFormMandatoryFields(userData: User) {
+        await this.fillUserFields(userData, this.registrationFlowFieldsMandatoryFields);
         await this.fillConfirmPassword(userData.password);
     }
 

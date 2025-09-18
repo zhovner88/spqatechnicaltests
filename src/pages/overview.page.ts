@@ -32,8 +32,8 @@ export class OverviewPage extends BasePage {
                 [200, 304].includes(response.status())
             ),
             this.updateContactInfoLink.click(),
+            await this.page.waitForLoadState("networkidle")
         ]);
-        await this.page.waitForLoadState("networkidle");
     }
 
 
