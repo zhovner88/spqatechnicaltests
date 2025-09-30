@@ -14,14 +14,14 @@ const TRANSFERS: Record<'first' | 'second', TransferDetails> = {
 
 test('should transfer funds between accounts', async ({
     registerNewUserAPIandLogin,
-    createAdditionalAccount,
+    createAccount,
     performTransfer,
     getAccountBalances,
     verifyTransfer
 }) => {
     await registerNewUserAPIandLogin();
 
-    const accounts = await createAdditionalAccount(ACCOUNT_TYPE);
+    const accounts = await createAccount(ACCOUNT_TYPE);
     const {
         defaultAccountId: checkingAccountId,
         newAccountId: savingsAccountId,

@@ -1,9 +1,7 @@
-import { Page } from '@playwright/test';
-import { OverviewPage } from '../pages/overview.page';
-import { OpenAccountPage } from '../pages/open-account.page';
+import { App } from '../app';
 
 export type AccountFixtures = {
-  createAdditionalAccount: (accountType: 'SAVINGS' | 'CHECKING') => Promise<{
+  createAccount: (accountType: 'SAVINGS' | 'CHECKING') => Promise<{
     defaultAccountId: string;
     newAccountId: string;
     defaultAccountBalance: number;
@@ -12,22 +10,19 @@ export type AccountFixtures = {
 };
 
 export const accountFixtures = {
-  createAdditionalAccount: async ({ page }: { page: Page }, use: any) => {
-    const createAdditionalAccount = async (accountType: 'SAVINGS' | 'CHECKING') => {
-      const overviewPage = new OverviewPage(page);
-      const openAccountPage = new OpenAccountPage(page);
-
-      const availableAccountsIds = await overviewPage.getAccountsIds();
+  createAccount: async ({ app }: { app: App }, use: any) => {
+    const createAccount = async (accountType: 'SAVINGS' | 'CHECKING') => {
+      const availableAccountsIds = await app.overviewPage.getAccountsIds();
       const defaultAccountId = availableAccountsIds[0];
 
-      await overviewPage.navigateToOpenNewAccount();
-      await openAccountPage.createAccount(accountType, availableAccountsIds[0]);
-      await openAccountPage.assertNewAccountIsCreated();
+      await app.overviewPage.navigateToOpenNewAccount();
+      await app.openAccountPage.createAccount(accountType, availableAccountsIds[0]);
+      await app.openAccountPage.assertNewAccountIsCreated();
 
-      await overviewPage.navigateToAccountOverview();
-      const newAccountIds = await overviewPage.getAccountsIds();
+      await app.overviewPage.navigateToAccountOverview();
+      const newAccountIds = await app.overviewPage.getAccountsIds();
       const newAccountId = newAccountIds[1];
-      const accountsAvailableAmount = await overviewPage.getAccountsAvailableAmount();
+      const accountsAvailableAmount = await app.overviewPage.getAccountsAvailableAmount();
 
       return {
         defaultAccountId,
@@ -36,6 +31,6 @@ export const accountFixtures = {
         newAccountBalance: accountsAvailableAmount[1]
       };
     };
-    await use(createAdditionalAccount);
+    await use(createAccount);
   }
 };
